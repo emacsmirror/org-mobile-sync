@@ -1,5 +1,33 @@
+;;; org-mobile-sync.el --- automatically sync org-mobile on changes
+
+;; Copyright (C) 2013 steckerhalter
+
+;; Author: steckerhalter
+;; Package-Requires: ((org-mode "8.0"))
+;; URL: https://github.com/steckerhalter/org-mobile-sync
+;; Keywords: org-mode org mobile sync todo
+
+;;; Commentary:
+
+;; Hooks into to `find-file-hook' to add all visited files and directories to `fasd'.
+;; Adds the function `fasd-find-file' to prompt and fuzzy complete available candidates
+
+;;; Requirements:
+
+;; Emacs 24.4 with `file-notify-support' is required for it to work.
+
+;;; Usage:
+
+;; (require 'org-mobile-sync)
+;; (org-mobile-sync-mode 1)
+
+;;; Code:
+
 (defvar org-mobile-push-timer nil
   "Timer that `org-mobile-push-timer' used to reschedule itself, or nil.")
+
+(defvar org-mobile-watch-descriptor nil
+  "Descriptor used by adding a watcher for `org-mobile-capture-file'.")
 
 (defun org-mobile-push-with-delay (secs)
   (when org-mobile-push-timer
@@ -8,35 +36,50 @@
         (run-with-idle-timer
          (* 1 secs) nil 'org-mobile-push)))
 
-(add-hook 'after-save-hook 
- (lambda () 
-   (when (eq major-mode 'org-mode)
-     (dolist (file (org-mobile-files-alist))
+(defun org-mobile-push-function ()
+  (when (eq major-mode 'org-mode)
+    (dolist (file (org-mobile-files-alist))
       (if (string= (file-truename (expand-file-name (car file)))
-		   (file-truename (buffer-file-name)))
-           (org-mobile-push-with-delay 30)))
-   )))
+                   (file-truename (buffer-file-name)))
+          (org-mobile-push-with-delay 30)))
+    ))
 
-(run-at-time "00:05" 86400 '(lambda () (org-mobile-push-with-delay 1))) ;; refreshes agenda file each day
+(defun org-mobile-sync--callback (ev)
+  "Handle file-notify callbacks.
+Argument EV contains the watch data."
+  (org-mobile-pull)
+  )
 
-(org-mobile-pull) ;; run org-mobile-pull at startup
+(defun org-mobile-sync-setup ()
+  (org-mobile-pull)               ;pull changes on activation
+  (add-hook 'after-save-hook 'org-mobile-push-function)
+  (setq org-mobile-watch-descriptor
+        (file-notify-add-watch
+         (file-truename
+          (concat
+           (file-name-as-directory org-mobile-directory)
+           org-mobile-capture-file))
+         '(change attribute-change)
+         #'org-mobile-sync--callback))
+  )
 
-(defun org-mobile-install-monitor (file secs)
-  (run-with-timer
-   0 secs
-   (lambda (f p)
-     (unless (< p (second (time-since (elt (file-attributes f) 5))))
-       (org-mobile-pull)))
-   file secs))
+(defun org-mobile-sync-teardown ()
+  (remove-hook 'after-save-hook 'org-mobile-push-function)
+  (file-notify-rm-watch org-mobile-watch-descriptor)
+  )
 
-(org-mobile-install-monitor (file-truename
-                  (concat
-                   (file-name-as-directory org-mobile-directory)
-                          org-mobile-capture-file))
-                 5)
+;;;###autoload
+(define-minor-mode org-mobile-sync-mode
+  "Toggle org-mobile-sync mode globally.
+   With no argument, this command toggles the mode.
+   Non-null prefix argument turns on the mode.
+   Null prefix argument turns off the mode."
+  :global t
 
-;; Do a pull every 5 minutes to circumvent problems with timestamping
-;; (ie. dropbox bugs)
-(run-with-timer 0 (* 5 60) 'org-mobile-pull)
+  (if org-mobile-sync-mode
+      (org-mobile-sync-setup)
+    (org-mobile-sync-teardown))
+  )
 
 (provide 'org-mobile-sync)
+;;; org-mobile-sync.el ends here

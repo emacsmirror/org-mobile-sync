@@ -1,9 +1,13 @@
 org-mobile-sync
 ===============
 
-Automatically push and pull changes to/from MobileOrg
+Automatically push and pull changes to/from [MobileOrg](http://orgmode.org/manual/MobileOrg.html).
 
-This just packages the following sections from the [MobileOrg FAQ](https://github.com/matburt/mobileorg-android/wiki/FAQ#wiki-How_do_I_get_orgmode_to_execute_orgmobilepush_automatically)
+Some of the code has been taken from the[MobileOrg FAQ](https://github.com/matburt/mobileorg-android/wiki/FAQ).
+
+I added support for inotify so that changes of the `org-mobile-capture-file` are detected immediately and trigger a `org-mobile-pull`.
+
+**Emacs 24.4 with `file-notify-support' is required for the mode to work.**
 
 El-Get recipe:
 
@@ -16,3 +20,4 @@ El-Get recipe:
 And then after `org-mode` has been loaded:
 
     (require 'org-mobile-sync)
+    (org-mobile-sync-mode 1)
