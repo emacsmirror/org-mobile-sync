@@ -9,8 +9,9 @@
 
 ;;; Commentary:
 
-;; Hooks into to `find-file-hook' to add all visited files and directories to `fasd'.
-;; Adds the function `fasd-find-file' to prompt and fuzzy complete available candidates
+;; Adds delayed `org-mobile-push' upon saving files that are part of
+;; `org-mobile-files-alist'. Watches the `org-mobile-capture-file' for
+;; changes with `file-notify.el' and then invokes `org-mobile-pull'.
 
 ;;; Requirements:
 
