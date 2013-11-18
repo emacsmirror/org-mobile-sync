@@ -3,7 +3,7 @@
 ;; Copyright (C) 2013 steckerhalter
 
 ;; Author: steckerhalter
-;; Package-Requires: ((org-mode "8.0"))
+;; Package-Requires: ((emacs "24.3.50") (org-mode "8.0"))
 ;; URL: https://github.com/steckerhalter/org-mobile-sync
 ;; Keywords: org-mode org mobile sync todo
 
@@ -15,7 +15,7 @@
 
 ;;; Requirements:
 
-;; Emacs 24.4 with `file-notify-support' is required for it to work.
+;; Emacs 24.3.50 with `file-notify-support' is required for it to work.
 
 ;;; Usage:
 
