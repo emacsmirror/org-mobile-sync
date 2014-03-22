@@ -10,6 +10,17 @@ I added support for inotify so that changes of the `org-mobile-capture-file` are
 
 ## Installation
 
+### quelpa
+
+`quelpa` is at https://github.com/quelpa/quelpa
+
+```lisp
+(quelpa '(org-mobile-sync :repo "steckerhalter/org-mobile-sync" :fetcher github))
+;; since the recipe is stored in melpa this also works:
+(quelpa 'org-mobile-sync)
+```
+Interactively: `M-x quelpa org-mobile-sync RET`.
+
 ### el-get
 
 ```lisp
