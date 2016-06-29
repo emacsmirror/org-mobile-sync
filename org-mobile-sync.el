@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'filenotify)
+(require 'org-mobile)
+
 (defvar org-mobile-push-timer nil
   "Timer that `org-mobile-push-timer' used to reschedule itself, or nil.")
 
