@@ -15,23 +15,15 @@ I added support for inotify so that changes of the `org-mobile-capture-file` are
 `quelpa` is at https://github.com/quelpa/quelpa
 
 ```lisp
-(quelpa '(org-mobile-sync :repo "steckerhalter/org-mobile-sync" :fetcher github))
+(quelpa '(org-mobile-sync :url "https://framagit.org/steckerhalter/org-mobile-sync.git" :fetcher git))
 ;; since the recipe is stored in melpa this also works:
 (quelpa 'org-mobile-sync)
 ```
 Interactively: `M-x quelpa org-mobile-sync RET`.
 
-### el-get
-
-```lisp
-(:name org-mobile-sync
-       :type git
-       :url "https://github.com/steckerhalter/org-mobile-sync")
-```
-
 ### MELPA
 
-`org-mobile-sync` is packaged in [MELPA](http://melpa.milkbox.net/) and can be installed via the Emacs package manager:
+`org-mobile-sync` is packaged in [MELPA](https://melpa.org/) and can be installed via the Emacs package manager:
 
 `M-x package-list-packages`, select `org-mobile-sync` from the list by pressing `i`, then press `x` to execute the changes. At that point, the package will be installed.
 
